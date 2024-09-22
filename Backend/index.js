@@ -3,9 +3,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 app.use(express.json())
-// app.get("/test",(req,res))
 
-// POST Endpoint: /bfhl
 app.post("/bfhl", (req, res) => {
   const { data } = req.body
 
@@ -39,7 +37,6 @@ app.post("/bfhl", (req, res) => {
   })
 })
 
-// GET Endpoint: /bfhl
 app.get("/bfhl", (req, res) => {
   res.status(200).json({
     operation_code: 1,
