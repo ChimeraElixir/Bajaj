@@ -89,12 +89,15 @@ function App() {
       <h1>RA2111026030165</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>JSON Input:</label>
+          <label>JSON Input: EX ("data": ["A","C","Z","c","i"])</label>
           <textarea
             value={jsonInput}
             onChange={handleJsonChange}
             rows="5"
             cols="30"
+            placeholder='{
+"data": ["A","C","Z","c","i"]
+}'
           />
         </div>
         <div>
