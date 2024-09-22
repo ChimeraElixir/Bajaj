@@ -46,22 +46,8 @@ app.post("/bfhl", upload.single("file"), (req, res) => {
     file_mime_type = req.file.mimetype
     file_size_kb = req.file.size / 1024
   }
-  console.log({
-    is_success: true,
-    user_id,
-    email,
-    roll_number,
-    numbers,
-    alphabets,
-    highest_lowercase_alphabet: highest_lowercase_alphabet
-      ? [highest_lowercase_alphabet]
-      : [],
-    file_valid: file_valid || true,
-    file_mime_type: file_mime_type || "doc/pdf",
-    file_size_kb: file_size_kb || 1800,
-  })
 
-  res.status(200).json({
+  const response = {
     is_success: true,
     user_id,
     email,
@@ -71,10 +57,15 @@ app.post("/bfhl", upload.single("file"), (req, res) => {
     highest_lowercase_alphabet: highest_lowercase_alphabet
       ? [highest_lowercase_alphabet]
       : [],
-    file_valid: file_valid || true,
-    file_mime_type: file_mime_type || "doc/pdf", // Default to 'doc/pdf' if no file is uploaded
-    file_size_kb: file_size_kb || 1800, // Default file size in KB if no file is uploaded
-  })
+    file_valid: file_valid,
+  }
+
+  if (file_valid) {
+    response.file_mime_type = file_mime_type
+    response.file_size_kb = file_size_kb
+  }
+
+  res.status(200).json(response)
 })
 
 app.get("/bfhl", (req, res) => {
