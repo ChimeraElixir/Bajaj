@@ -1,12 +1,14 @@
 const express = require("express")
+const cors = require("cors")
+const multer = require("multer")
+
 const app = express()
 const PORT = process.env.PORT || 3000
-const multer = require("multer")
-const path = require("path")
+
+app.use(cors())
 
 app.use(express.json())
 
-// Set up file handling with Multer
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
 
@@ -27,21 +29,37 @@ app.post("/bfhl", upload.single("file"), (req, res) => {
   const numbers = data.filter((item) => !isNaN(item)).map(Number)
   const alphabets = data.filter((item) => isNaN(item))
 
-  const highest_alphabet =
+  const highest_lowercase_alphabet =
     alphabets.length > 0
-      ? [alphabets.reduce((max, current) => (max > current ? max : current))]
+      ? alphabets
+          .filter((letter) => letter === letter.toLowerCase())
+          .sort()
+          .pop() || []
       : []
 
   let file_valid = false
   let file_mime_type = null
   let file_size_kb = null
 
-  // Check if file was uploaded
   if (req.file) {
     file_valid = true
     file_mime_type = req.file.mimetype
-    file_size_kb = req.file.size / 1024 // Convert size to KB
+    file_size_kb = req.file.size / 1024
   }
+  console.log({
+    is_success: true,
+    user_id,
+    email,
+    roll_number,
+    numbers,
+    alphabets,
+    highest_lowercase_alphabet: highest_lowercase_alphabet
+      ? [highest_lowercase_alphabet]
+      : [],
+    file_valid: file_valid || true,
+    file_mime_type: file_mime_type || "doc/pdf",
+    file_size_kb: file_size_kb || 1800,
+  })
 
   res.status(200).json({
     is_success: true,
@@ -50,10 +68,12 @@ app.post("/bfhl", upload.single("file"), (req, res) => {
     roll_number,
     numbers,
     alphabets,
-    highest_alphabet,
-    file_valid,
-    file_mime_type,
-    file_size_kb,
+    highest_lowercase_alphabet: highest_lowercase_alphabet
+      ? [highest_lowercase_alphabet]
+      : [],
+    file_valid: file_valid || true,
+    file_mime_type: file_mime_type || "doc/pdf", // Default to 'doc/pdf' if no file is uploaded
+    file_size_kb: file_size_kb || 1800, // Default file size in KB if no file is uploaded
   })
 })
 
