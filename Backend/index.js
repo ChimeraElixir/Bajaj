@@ -1,10 +1,16 @@
 const express = require("express")
 const app = express()
 const PORT = process.env.PORT || 3000
+const multer = require("multer")
+const path = require("path")
 
 app.use(express.json())
 
-app.post("/bfhl", (req, res) => {
+// Set up file handling with Multer
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
+
+app.post("/bfhl", upload.single("file"), (req, res) => {
   const { data } = req.body
 
   if (!Array.isArray(data)) {
@@ -26,6 +32,17 @@ app.post("/bfhl", (req, res) => {
       ? [alphabets.reduce((max, current) => (max > current ? max : current))]
       : []
 
+  let file_valid = false
+  let file_mime_type = null
+  let file_size_kb = null
+
+  // Check if file was uploaded
+  if (req.file) {
+    file_valid = true
+    file_mime_type = req.file.mimetype
+    file_size_kb = req.file.size / 1024 // Convert size to KB
+  }
+
   res.status(200).json({
     is_success: true,
     user_id,
@@ -34,6 +51,9 @@ app.post("/bfhl", (req, res) => {
     numbers,
     alphabets,
     highest_alphabet,
+    file_valid,
+    file_mime_type,
+    file_size_kb,
   })
 })
 
